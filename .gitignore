@@ -184,3 +184,5 @@ dataset/Evaluation.md
 jupyter_notebook.slurm
 
 llms/
+
+*.csv
