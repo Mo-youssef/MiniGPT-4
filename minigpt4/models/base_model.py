@@ -13,7 +13,7 @@ from omegaconf import OmegaConf
 import numpy as np
 import torch
 import torch.nn as nn
-from transformers import LlamaTokenizer
+from transformers import LlamaTokenizer, AutoTokenizer, AutoModelForCausalLM
 from peft import (
     LoraConfig,
     get_peft_model,
@@ -171,9 +171,15 @@ class BaseModel(nn.Module):
     def init_llm(cls, llama_model_path, low_resource=False, low_res_device=0, lora_r=0,
                  lora_target_modules=["q_proj","v_proj"], **lora_kargs):
         logging.info('Loading LLAMA')
-        llama_tokenizer = LlamaTokenizer.from_pretrained(llama_model_path, use_fast=False)
+        # print("llama_model_path:", llama_model_path)
+        if 'bloomz' in llama_model_path:
+            checkpoint = "bigscience/bloomz-7b1-mt" 
+            llama_tokenizer = AutoTokenizer.from_pretrained(checkpoint, use_fast=False)
+            LlamaForCausalLM = AutoModelForCausalLM
+        else:
+            llama_tokenizer = LlamaTokenizer.from_pretrained(llama_model_path, use_fast=False)
         llama_tokenizer.pad_token = "$$"
-
+ 
         if low_resource:
             llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model_path,
