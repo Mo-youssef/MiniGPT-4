@@ -185,4 +185,4 @@ jupyter_notebook.slurm
 
 llms/
 
-*.csv
+generations/
